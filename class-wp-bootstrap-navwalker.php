@@ -49,7 +49,7 @@ if ( ! class_exists( 'WP_Bootstrap_Navwalker' ) ) {
 			}
 			$indent = str_repeat( $t, $depth );
 			// Default class to add to the file.
-			$classes = array( 'dropdown-menu' );
+			$classes = array( 'dropdown-menu navbar-nav' );
 			/**
 			 * Filters the CSS class(es) applied to a menu list element.
 			 *
@@ -182,11 +182,21 @@ if ( ! class_exists( 'WP_Bootstrap_Navwalker' ) ) {
 			$atts['rel']    = ! empty( $item->xfn ) ? $item->xfn : '';
 			// If item has_children add atts to <a>.
 			if ( isset( $args->has_children ) && $args->has_children && 0 === $depth && $args->depth > 1 ) {
-				$atts['href']          = '#';
-				$atts['data-toggle']   = 'dropdown';
-				$atts['aria-haspopup'] = 'true';
-				$atts['aria-expanded'] = 'false';
-				$atts['class']         = 'dropdown-toggle nav-link';
+
+				/*
+				* Remove hash link and allow parent link to be clickable
+				* Remove dropdown toggle from a link
+				* Add menu toggle for a split button
+				*
+	      * $atts['href']          = '#';
+				* $atts['data-toggle']   = 'dropdown';
+				* $atts['aria-haspopup'] = 'false';
+				* $atts['aria-expanded'] = 'false';
+				* $atts['class']         = 'dropdown-toggle nav-link';
+				*/
+			
+	      $atts['href']          = ( $item->url );
+				$atts['class']         = 'nav-link';
 				$atts['id']            = 'menu-item-dropdown-' . $item->ID;
 			} else {
 				$atts['href'] = ! empty( $item->url ) ? $item->url : '#';
@@ -285,6 +295,9 @@ if ( ! class_exists( 'WP_Bootstrap_Navwalker' ) ) {
 			}
 
 			$item_output .= isset( $args->after ) ? $args->after : '';
+
+			// Display Toggle icon if top level li has children
+			$item_output .= ( $args->has_children && 0 === $depth ) ? ' <span data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="toggle-menu dropdown-toggle"></span>' : '';
 
 			/**
 			 * END appending the internal item contents to the output.
